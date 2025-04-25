@@ -35,7 +35,7 @@ ALTER TABLE `blind` DROP COLUMN `collection`,
     ADD COLUMN `order_id` VARCHAR(191) NOT NULL DEFAULT '',
     ADD COLUMN `quantity` INTEGER NOT NULL DEFAULT 0,
     ADD COLUMN `type_id` VARCHAR(191) NOT NULL DEFAULT '',
-    ADD COLUMN `width` DOUBLE NOT NULL DEFAULT 0;
+    ADD COLUMN `width` DOUBLE NOT NULL DEFAULT '';
 
 -- AlterTable
 ALTER TABLE `orders` DROP COLUMN `blind_id`,
@@ -49,11 +49,11 @@ ALTER TABLE `orders` DROP COLUMN `blind_id`,
 -- CreateTable
 CREATE TABLE `Blind_Type` (
     `id` VARCHAR(191) NOT NULL,
-    `type` VARCHAR(191) NOT NULL,
-    `collection` VARCHAR(191) NOT NULL,
-    `color` VARCHAR(191) NOT NULL,
-    `max_width` DOUBLE NULL,
-    `price` DOUBLE NOT NULL,
+    `type` VARCHAR(191) NOT NULL DEFAULT '',
+    `collection` VARCHAR(191) NOT NULL DEFAULT '',
+    `color` VARCHAR(191) NOT NULL DEFAULT '',
+    `max_width` DOUBLE NULL DEFAULT 0,
+    `price` DOUBLE NOT NULL DEFAULT 0,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
