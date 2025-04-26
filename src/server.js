@@ -11,6 +11,7 @@ app.use(cors({
     origin: ['https://gustavo-sms.github.io'],
     credentials: true
 }))
+app.options('*', cors())
 app.use(cookieParser())
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
