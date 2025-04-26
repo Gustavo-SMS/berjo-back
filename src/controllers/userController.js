@@ -196,15 +196,15 @@ const validateLogin = async (req, res) => {
 
     res.cookie('token', accessToken, {
       httpOnly: true,
-      secure: false,
-      sameSite: 'lax',
+      secure: true,
+      sameSite: 'None',
       maxAge: 15 * 60 * 1000 // 15min
     })
 
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
-      secure: false,
-      sameSite: 'lax',
+      secure: true,
+      sameSite: 'None',
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 dias
     })
 

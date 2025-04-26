@@ -47,8 +47,8 @@ async function authenticateToken(req, res, next) {
 
             res.cookie('token', newAccessToken, {
                 httpOnly: true,
-                secure: false,
-                sameSite: 'lax',
+                secure: true,
+                sameSite: 'None',
                 maxAge: 15 * 60 * 1000 
             })
 
