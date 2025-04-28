@@ -140,7 +140,7 @@ const updateCustomer = async (req, res) => {
             data: {
                 name: name || undefined,
                 email: email || undefined,
-                phone: phone || undefined,
+                phone: parseInt(phone) || undefined,
                 debt: debt !== undefined ? debt : undefined
             }
         })
@@ -151,10 +151,10 @@ const updateCustomer = async (req, res) => {
             },
             data: {
                 street: street || undefined,
-                house_number: house_number || undefined,
+                house_number: parseInt(house_number) || undefined,
                 city: city || undefined,
                 district: district || undefined,
-                zip: zip || undefined
+                zip: parseInt(zip) || undefined
             }
         })
 

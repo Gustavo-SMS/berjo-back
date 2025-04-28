@@ -353,7 +353,7 @@ const updateOrder = async (req, res) => {
             },
             data: {
                 status: status || undefined,
-                total_price: total_price || undefined
+                total_price: parseFloat(total_price) || undefined
             }
         })
 
