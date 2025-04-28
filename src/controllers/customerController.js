@@ -5,9 +5,16 @@ const getAll = async (req, res) => {
         const customers = await prismaClient.customer.findMany({
             where: {
               isActive: true,
-              user: {
-                role: 'CUSTOMER'
-              }
+              OR: [
+                {
+                  user: {
+                    role: 'CUSTOMER'
+                  }
+                },
+                {
+                  user: null
+                }
+              ]
             },
             include: {
               address: true
