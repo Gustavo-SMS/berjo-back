@@ -1,7 +1,7 @@
 const Joi = require('joi')
 
 const userSchema = Joi.object({
-    login: Joi.string().required(), 
+    login: Joi.string().min(5).required(), 
     password: Joi.string().min(6).pattern(new RegExp('^[a-zA-Z0-9]{3,30}$')).required(),
     confirmPassword: Joi.ref("password"),
     customerId: Joi.string().required(),
@@ -39,7 +39,7 @@ const blindTypeSchema = Joi.object({
     type: Joi.string().required(), 
     collection: Joi.string().required(), 
     color: Joi.string().required(), 
-    max_width: Joi.number().optional(), 
+    max_width: Joi.number().allow('', null).optional(), 
     price: Joi.number().required()
 })
 
