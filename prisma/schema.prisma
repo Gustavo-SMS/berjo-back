@@ -33,6 +33,7 @@ model Customer {
   id          String    @id @default(uuid())
   name        String
   email       String    @unique
+  docNumber   String    @unique
   phone       Float
   debt        Float?
   address     Address?
@@ -49,9 +50,11 @@ model Customer {
 model Address {
   id            Int       @id @default(autoincrement())
   street        String
-  house_number  Int
+  house_number  Int?
+  complement    String?
   city          String
   district      String
+  state         String
   zip           Int
 
   customer      Customer  @relation(fields: [customer_id], references: [id])

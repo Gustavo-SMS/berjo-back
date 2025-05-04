@@ -91,10 +91,6 @@ const getUnlinkedCustomers = async (req, res) => {
                 name: true
             }
         })
-        
-        if (customers.length === 0) {
-            return res.status(404).json({ error: 'Nenhum usuário foi encontrado' })
-        }
 
         return res.status(200).json(customers)
     } catch (error) {
@@ -103,20 +99,40 @@ const getUnlinkedCustomers = async (req, res) => {
 }
 
 const createCustomer = async (req, res) => {
-    const { name, email, phone, street, house_number, city, district, zip } = req.body
+    const { name, email, phone, docNumber, street, house_number, complement, city, district, state, zip } = req.body
+    
+    const checkUniqueData = await prismaClient.customer.findFirst({
+        where: {
+            OR: [
+                { email },
+                { docNumber }
+            ]
+        }
+    })
 
+    if(checkUniqueData) {
+        if(email === checkUniqueData.email) {
+            return res.status(409).json({ error: 'Email já cadastrado'})
+        } else if(docNumber === checkUniqueData.docNumber) {
+            return res.status(409).json({ error: 'CPF/CNPJ já cadastrado'})
+        }
+    }
+    
     try {
         const customer = await prismaClient.customer.create({
             data: {
                 name,
                 email,
                 phone: parseInt(phone),
+                docNumber,
                 address: {
                     create: {
                         street,
                         house_number: parseInt(house_number),
+                        complement,
                         city,
                         district,
+                        state,
                         zip: parseInt(zip)
                     }
                 }
@@ -130,8 +146,8 @@ const createCustomer = async (req, res) => {
 }
 
 const updateCustomer = async (req, res) => {
-    const { id, name, email, phone, street, house_number, city, district, zip, debt } = req.body
-
+    const { id, name, email, docNumber, phone, street, house_number, complement, city, district, state, zip, debt } = req.body
+ 
     try {
         const customer = prismaClient.customer.update({
             where: {
@@ -140,6 +156,7 @@ const updateCustomer = async (req, res) => {
             data: {
                 name: name || undefined,
                 email: email || undefined,
+                docNumber: docNumber || undefined,
                 phone: parseInt(phone) || undefined,
                 debt: debt !== undefined ? debt : undefined
             }
@@ -152,8 +169,10 @@ const updateCustomer = async (req, res) => {
             data: {
                 street: street || undefined,
                 house_number: parseInt(house_number) || undefined,
+                complement: complement || undefined,
                 city: city || undefined,
                 district: district || undefined,
+                state: state || undefined,
                 zip: parseInt(zip) || undefined
             }
         })
