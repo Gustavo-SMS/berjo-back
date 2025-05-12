@@ -80,8 +80,7 @@ const getCustomerByName = async (req, res) => {
 }
 
 const getUnlinkedCustomers = async (req, res) => {
-    try {
-        
+    try {  
         const customers = await prismaClient.customer.findMany({
             where: {
                 user: null,
@@ -95,6 +94,23 @@ const getUnlinkedCustomers = async (req, res) => {
         return res.status(200).json(customers)
     } catch (error) {
         return res.status(500).json({ error: 'Erro ao buscar usuários não vinculados' })
+    }
+}
+
+const getInactiveCustomers = async (req, res) => {
+    try {
+        const customers = await prismaClient.customer.findMany({
+            where: {
+                isActive: false
+            },
+            include: {
+                address: true
+            }
+        })
+
+        return res.status(200).json(customers)
+    } catch (error) {
+        return res.status(500).json({ error: 'Erro ao buscar usuários não inativos' })
     }
 }
 
@@ -229,9 +245,8 @@ const deleteCustomer = async (req, res) => {
     }
 }
 
-const restoreCustomer = async (req, res) => {
-    const { id } = req.body
-
+const reactivateCustomer = async (req, res) => {
+    const id = req.params.id
     try {
         const customer = await prismaClient.customer.update({
             where: {
@@ -253,9 +268,10 @@ module.exports = {
     getOne,
     getCustomerByName,
     getUnlinkedCustomers,
+    getInactiveCustomers,
     createCustomer,
     updateCustomer,
     updateDebt,
     deleteCustomer,
-    restoreCustomer
+    reactivateCustomer
 }

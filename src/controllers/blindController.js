@@ -85,24 +85,34 @@ const deleteBlind = async (req, res) => {
     const id = req.params.id
 
     try {
-        const blind = await prismaClient.blind.delete({
-            where: {
-              id
-            }
-          })
+        const result = await prismaClient.$transaction(async (prisma) => {
+        const blind = await prisma.blind.delete({
+            where: { id }
+        })
 
-        await prismaClient.order.update({
-            where: {
-                id: blind.order_id
-            },
+        await prisma.order.update({
+            where: { id: blind.order_id },
             data: {
-                total_price: {
-                    decrement: blind.blind_price
-                }
+            total_price: {
+                decrement: blind.blind_price
+            }
             }
         })
 
-        return res.status(200).json(blind)
+        const remainingBlinds = await prisma.blind.findMany({
+            where: { order_id: blind.order_id }
+        })
+
+        if (remainingBlinds.length === 0) {
+            await prisma.order.delete({
+            where: { id: blind.order_id }
+            })
+        }
+
+        return blind
+        })
+
+        return res.status(200).json(result)
     } catch (error) {
         console.log(error)
         return res.status(500).json({ error: error.message })

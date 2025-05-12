@@ -2,7 +2,11 @@ const { prismaClient } = require('../database/prismaClient')
 
 const getAll = async (req, res) => {
     try {
-        const blindType = await prismaClient.blind_Type.findMany({})
+        const blindType = await prismaClient.blind_Type.findMany({
+            where: {
+                isActive: true
+            }
+        })
 
         
         if(blindType.length === 0) {
@@ -18,6 +22,9 @@ const getAll = async (req, res) => {
 const getTypes = async (req, res) => {
     try {
         const blindType = await prismaClient.blind_Type.findMany({
+            where: {
+                isActive: true
+            },
             select: {
                 type: true
               }
@@ -39,7 +46,8 @@ const getByType = async (req, res) => {
     try {
         const blindType = await prismaClient.blind_Type.findMany({
             where: {
-                type
+                type,
+                isActive: true
             }
         })
 
@@ -128,10 +136,9 @@ const deleteBlindType = async (req, res) => {
     const id = req.params.id
 
     try {
-        const blindType = await prismaClient.blind_Type.delete({
-            where: {
-              id
-            }
+        const blindType = await prismaClient.blind_Type.update({
+            where: { id },
+            data: { isActive: false }
           })
 
         if(!blindType) {

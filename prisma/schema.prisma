@@ -102,6 +102,7 @@ model Blind_Type {
   color       String
   max_width   Float?
   price       Float
+  isActive    Boolean   @default(true)
 
   blind       Blind[]
 }

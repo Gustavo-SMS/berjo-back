@@ -36,10 +36,12 @@ router.get('/me', authenticateToken.authenticateToken, (req, res) => {
 
 router.get('/customers', authenticateToken.authenticateToken, customerController.getAll)
 router.get('/customers/unlinked', authenticateToken.authenticateToken, customerController.getUnlinkedCustomers)
+router.get('/customers/inactive', authenticateToken.authenticateToken, customerController.getInactiveCustomers)
 router.get('/customers/name/:name', authenticateToken.authenticateToken, customerController.getCustomerByName)
 router.get('/customers/:id', authenticateToken.authenticateToken, customerController.getOne)
 router.post('/customers', authenticateToken.authenticateToken, customerMiddleware.validateCustomerData, customerController.createCustomer)
 router.put('/customers', authenticateToken.authenticateToken, customerController.updateCustomer)
+router.patch('/customers/reactivate/:id', authenticateToken.authenticateToken, customerController.reactivateCustomer)
 router.delete('/customers/:id', authenticateToken.authenticateToken, customerController.deleteCustomer)
 
 router.get('/orders', authenticateToken.authenticateToken, orderController.getAll)
