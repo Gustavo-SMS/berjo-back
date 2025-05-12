@@ -129,8 +129,13 @@ const registerUser = async (req, res) => {
 
 async function validateUser(login) {
   try {
-    const user = await prismaClient.user.findUnique({
-      where: { login },
+    const user = await prismaClient.user.findFirst({
+      where: {
+        OR: [
+          { login },
+          { customer: { email: login } }
+        ]
+      },
       include: { customer: true }
     })
 
@@ -165,8 +170,9 @@ const validateLogin = async (req, res) => {
   const { login, password } = req.body
 
   const user = await validateUser(login)
-  if (!user) {
-    return res.status(404).json({ msg: 'Usuário não encontrado!' })
+
+  if (user.error) {
+    return res.status(404).json({ error: user.error })
   }
 
   const checkPassword = await validatePassword(password, user.password)
