@@ -244,7 +244,7 @@ const recoverPassword = async (req, res) => {
     }
   })
 
-  const link = `http://127.0.0.1:5173/resetPassword?token=${token}`
+  const link = `https://berjo.onrender.com/resetPassword?token=${token}`
 
   await sendEmail({
     to: email,
