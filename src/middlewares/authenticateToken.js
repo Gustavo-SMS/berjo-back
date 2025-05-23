@@ -1,23 +1,24 @@
 const jwt = require('jsonwebtoken')
-const { prismaClient }  = require('../database/prismaClient')
+const { prismaClient } = require('../database/prismaClient')
 
 async function authenticateToken(req, res, next) {
-    const token = req.cookies.token
-    const refreshToken = req.cookies.refreshToken
-    
+    const authHeader = req.headers['authorization']
+    const token = authHeader && authHeader.split(' ')[1]
+    const refreshToken = req.body.refreshToken || req.headers['x-refresh-token']
+
     if (!token && !refreshToken) {
         return res.status(401).json({ msg: 'Token não fornecido.' })
     }
 
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET)
-      
+
         req.user = {
             id: decoded.id,
             role: decoded.role,
             customerId: decoded.customerId
         }
-        
+
         return next()
     } catch (err) {
         if (!refreshToken) {
@@ -26,11 +27,11 @@ async function authenticateToken(req, res, next) {
 
         try {
             const decodedRefresh = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET)
-            
+
             const user = await prismaClient.user.findUnique({
                 where: { id: decodedRefresh.id }
             })
-        
+
             if (!user || user.refreshToken !== refreshToken) {
                 return res.status(403).json({ msg: 'Refresh token inválido.' })
             }
@@ -45,12 +46,8 @@ async function authenticateToken(req, res, next) {
                 { expiresIn: '15m' }
             )
 
-            res.cookie('token', newAccessToken, {
-                httpOnly: true,
-                secure: true,
-                sameSite: 'None',
-                maxAge: 15 * 60 * 1000 
-            })
+            res.setHeader('x-access-token', newAccessToken)
+            res.setHeader('Access-Control-Expose-Headers', 'x-access-token')
 
             req.user = {
                 id: user.id,
@@ -65,6 +62,6 @@ async function authenticateToken(req, res, next) {
     }
 }
 
-module.exports = { 
+module.exports = {
     authenticateToken
 }

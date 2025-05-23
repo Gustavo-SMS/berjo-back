@@ -176,11 +176,11 @@ const validateLogin = async (req, res) => {
   }
 
   const checkPassword = await validatePassword(password, user.password)
-  
+
   if (!checkPassword) {
-    return res.status(422).json({ msg: 'Senha incorreta' })
+    return res.status(422).json({ error: 'Senha incorreta' })
   }
-  
+
   try {
     const payload = {
       id: user.id,
@@ -200,24 +200,16 @@ const validateLogin = async (req, res) => {
       data: { refreshToken }
     })
 
-    res.cookie('token', accessToken, {
-      httpOnly: true,
-      secure: true,
-      sameSite: 'None',
-      maxAge: 15 * 60 * 1000 // 15min
+    res.status(200).json({
+      msg: 'Autenticação realizada com sucesso',
+      accessToken,
+      refreshToken,
+      role: user.role,
+      customerId: user.customer?.id || null
     })
-
-    res.cookie('refreshToken', refreshToken, {
-      httpOnly: true,
-      secure: true,
-      sameSite: 'None',
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 dias
-    })
-
-    res.status(200).json({ msg: 'Autenticação realizada com sucesso' })
   } catch (err) {
-    console.log(err)
-    res.status(500).json({ msg: 'Aconteceu um erro no servidor, tente novamente mais tarde!' })
+    console.error(err)
+    res.status(500).json({ error: 'Aconteceu um erro no servidor, tente novamente mais tarde!' })
   }
 }
 

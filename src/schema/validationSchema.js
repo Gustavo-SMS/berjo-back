@@ -115,9 +115,8 @@ const blindSchema = Joi.object({
     'number.positive': 'Altura do comando deve ser maior que zero',
     'any.required': 'Altura do comando é obrigatória'
   }),
-  model: Joi.string().min(1).max(3).required().messages({
+  model: Joi.string().min(1).required().messages({
     'string.min': 'Modelo é obrigatório',
-    'string.max': 'Modelo deve ter no máximo 3 caracteres',
     'string.empty': 'Modelo é obrigatório',
     'any.required': 'Modelo é obrigatório'
   }),
